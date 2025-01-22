@@ -31,6 +31,17 @@ export class UsersService {
   }
 
   async createUser(username: string): Promise<object> {
+    const existingUser = await this.prisma.user.findUnique({
+      where: { username }
+    })
+
+    if (existingUser) {
+      return {
+        data: null,
+        statusCode: 400,
+        message: 'Username already exists!'
+      }
+    }
     const newUser = await this.prisma.user.create({
       data: { username }
     })
